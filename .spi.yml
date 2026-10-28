@@ -2,5 +2,4 @@ version: 1
 builder:
   configs:
     - platform: ios
-      # Add each module once it exists:
-      # documentation_targets: [AppRouter]
+      documentation_targets: [DovetailRouter]

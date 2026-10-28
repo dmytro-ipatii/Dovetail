@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "BC984793-94E2-4F62-AF36-86C32B71F2A2",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "DovetailRouterTests",
+        "name" : "DovetailRouterTests"
+      }
+    }
+  ],
+  "version" : 1
+}
