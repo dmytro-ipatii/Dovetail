@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-10-28
+
 ### Added
 - `DovetailRouter` module, a router for SwiftUI navigation:
   - `DovetailRouterView`, a container that owns a `NavigationStack` and presents screens on behalf of its content.
@@ -14,3 +16,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   - The `dovetailRouter` environment value, so nested views can route without passing the router down.
   - `MockRouter`, a no-op router for previews and tests.
   - DocC documentation.
+
+[Unreleased]: https://github.com/dmytro-ipatii/Dovetail/compare/0.1.0...HEAD
+[0.1.0]: https://github.com/dmytro-ipatii/Dovetail/releases/tag/0.1.0
