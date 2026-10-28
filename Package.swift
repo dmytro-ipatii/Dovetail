@@ -1,19 +1,18 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 6.3
 
 import PackageDescription
 
 let package = Package(
     name: "Dovetail",
     platforms: [
-        .iOS(.v17)
+        .iOS(.v18)
     ],
     products: [
-        // One library product per module, e.g.
-        // .library(name: "AppRouter", targets: ["AppRouter"]),
+        .library(name: "DovetailRouter", targets: ["DovetailRouter"]),
     ],
     targets: [
-        // One target (and matching test target) per module, e.g.
-        // .target(name: "AppRouter"),
-        // .testTarget(name: "AppRouterTests", dependencies: ["AppRouter"]),
-    ]
+        .target(name: "DovetailRouter"),
+        .testTarget(name: "DovetailRouterTests", dependencies: ["DovetailRouter"]),
+    ],
+    swiftLanguageModes: [.v6]
 )
