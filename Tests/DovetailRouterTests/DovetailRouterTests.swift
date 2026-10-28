@@ -3,7 +3,7 @@ import Testing
 @testable import DovetailRouter
 
 @MainActor
-@Suite("DovetailRouter environment")
+@Suite("DovetailRouter environment", .tags(.router))
 struct DovetailRouterTests {
     @Test func defaultEnvironmentRouterIsMockRouter() {
         let router = EnvironmentValues().dovetailRouter
@@ -18,7 +18,7 @@ struct DovetailRouterTests {
     }
 
     @Test func mockRouterHandlesEveryCallWithoutPresenting() {
-        let router: DovetailRouter = MockRouter()
+        let router: Router = MockRouter()
         let alert = AlertContent(title: "Alert", actions: [])
         let dialog = ConfirmationDialogContent(title: "Dialog", actions: [])
 

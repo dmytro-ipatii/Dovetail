@@ -1,11 +1,12 @@
 //
-//  CustomModalViewModifier.swift
-//  Presentation
+//  CustomModalView.swift
+//  Dovetail
 //
 //  Created by Dmytro Ipatii on 25/10/2026.
 //
 import SwiftUI
 
+/// Draws a custom modal: a full-screen background that dismisses on tap, with the content above it.
 struct CustomModalView: View {
 
     var backgroundColor: Color

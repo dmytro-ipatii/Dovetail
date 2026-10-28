@@ -3,7 +3,7 @@ import Testing
 @testable import DovetailRouter
 
 @MainActor
-@Suite("AnyDestination")
+@Suite("AnyDestination", .tags(.router))
 struct AnyDestinationTests {
     @Test func eachDestinationGetsUniqueID() {
         let first = AnyDestination(destination: Text("First"))

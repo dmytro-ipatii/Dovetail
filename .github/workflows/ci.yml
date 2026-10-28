@@ -11,8 +11,14 @@ concurrency:
 
 jobs:
   test:
-    name: Build & Test (iOS)
-    runs-on: macos-15
+    name: Build & Test (iOS, ${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        # macos-15 checks the oldest supported toolchain (Xcode 16, Swift 6.0+),
+        # macos-26 the newest SDK on GitHub's runners.
+        os: [macos-15, macos-26]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7
       - name: Check for targets
@@ -24,7 +30,18 @@ jobs:
       - name: Test
         if: steps.targets.outputs.count != '0'
         run: |
+          # Xcode names the scheme "Dovetail-Package" when there are several products, "Dovetail" otherwise.
+          scheme=$(xcodebuild -list -json | python3 -c '
+          import json, sys
+          schemes = json.load(sys.stdin)["workspace"]["schemes"]
+          print(next((s for s in schemes if s.endswith("-Package")), schemes[0]))')
+          # Use the first available iPhone simulator, whatever the runner image ships with.
+          udid=$(xcrun simctl list devices available --json | python3 -c '
+          import json, sys
+          devices = json.load(sys.stdin)["devices"]
+          print(next(d["udid"] for runtime, ds in devices.items() if "iOS" in runtime for d in ds if d["name"].startswith("iPhone")))')
+          echo "Testing scheme $scheme on simulator $udid"
           xcodebuild test \
-            -scheme Dovetail-Package \
-            -destination 'platform=iOS Simulator,name=iPhone 16' \
+            -scheme "$scheme" \
+            -destination "id=$udid" \
             -skipPackagePluginValidation

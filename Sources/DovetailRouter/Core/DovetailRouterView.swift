@@ -6,7 +6,28 @@
 //
 import SwiftUI
 
-public struct DovetailRouterView<Content: View>: View, DovetailRouter {
+/// A container view that owns the navigation state of a screen and routes from it.
+///
+/// Wrap the root of your app, or of any independent flow, in a `DovetailRouterView`. It provides a
+/// `NavigationStack` and presents sheets, full screen covers, custom modals, alerts and confirmation
+/// dialogs on behalf of its content.
+///
+/// ```swift
+/// @main
+/// struct MyApp: App {
+///     var body: some Scene {
+///         WindowGroup {
+///             DovetailRouterView { router in
+///                 HomeView(router: router)
+///             }
+///         }
+///     }
+/// }
+/// ```
+///
+/// The router is passed to `content` and also injected as
+/// ``SwiftUICore/EnvironmentValues/dovetailRouter``, so nested views can read it from the environment.
+public struct DovetailRouterView<Content: View>: View, Router {
     @Environment(\.dismiss) private var dismiss
 
     @State private var destinations: [AnyDestination] = []
@@ -16,8 +37,8 @@ public struct DovetailRouterView<Content: View>: View, DovetailRouter {
     @State private var fullScreenCover: AnyDestination?
 
     // Modal, Alerts and Dialog
-    @State private var modalBackgroundColor: Color = Color.black.opacity(0.25)
-    @State private var modalTransition: AnyTransition = AnyTransition.scale(scale: 0.9).combined(with: .opacity)
+    @State private var modalBackgroundColor: Color = ModalDefaults.backgroundColor
+    @State private var modalTransition: AnyTransition = ModalDefaults.transition
 
     @State private var customModal: AnyDestination?
 
@@ -26,12 +47,22 @@ public struct DovetailRouterView<Content: View>: View, DovetailRouter {
 
     private var addNavigationStack: Bool = true
 
-    @ViewBuilder var content: (_ router: DovetailRouter) -> Content
+    @ViewBuilder var content: (_ router: Router) -> Content
 
+    /// Creates a router view.
+    ///
+    /// For the root of a flow, use the default values and pass only `content`.
+    ///
+    /// - Parameters:
+    ///   - addNavigationStack: Whether to wrap `content` in its own `NavigationStack`. Pass `false`
+    ///     when the view is already inside a navigation stack owned by another router.
+    ///   - screenDestinations: The navigation path of the enclosing stack, used when
+    ///     `addNavigationStack` is `false` so pushed screens join that stack. Pass `nil` for a root router.
+    ///   - content: A view builder that receives this router and returns the screen's content.
     public init(
         addNavigationStack: Bool = true,
         screenDestinations: (Binding<[AnyDestination]>)? = nil,
-        content: @escaping (_ router: DovetailRouter) -> Content
+        content: @escaping (_ router: Router) -> Content
     ) {
         self.addNavigationStack = addNavigationStack
         self._screenDestinations = screenDestinations ?? .constant([])
@@ -61,7 +92,7 @@ public struct DovetailRouterView<Content: View>: View, DovetailRouter {
 
     public func showScreen<T: View>(
         _ segue: SegueOption,
-        @ViewBuilder content: @escaping (DovetailRouter) -> T
+        @ViewBuilder content: @escaping (Router) -> T
     ) {
         let isRoot: Bool = screenDestinations.isEmpty
 
@@ -91,8 +122,8 @@ public struct DovetailRouterView<Content: View>: View, DovetailRouter {
     }
 
     public func showModal<T: View>(
-        backgroundColor: Color = Color.black.opacity(0.25),
-        transition: AnyTransition = AnyTransition.scale(scale: 0.9).combined(with: .opacity),
+        backgroundColor: Color,
+        transition: AnyTransition,
         @ViewBuilder content: @escaping () -> T
     ) {
         modalBackgroundColor = backgroundColor
@@ -103,7 +134,12 @@ public struct DovetailRouterView<Content: View>: View, DovetailRouter {
     public func showModal<T: View>(
         @ViewBuilder content: @escaping () -> T
     ) {
-        customModal = AnyDestination(destination: content())
+        // Reset the styling, so a previously styled modal doesn't leak into this one.
+        showModal(
+            backgroundColor: ModalDefaults.backgroundColor,
+            transition: ModalDefaults.transition,
+            content: content
+        )
     }
 
     public func dismissModal() {
@@ -129,4 +165,10 @@ public struct DovetailRouterView<Content: View>: View, DovetailRouter {
     public func dismissScreen() {
         dismiss()
     }
+}
+
+/// The styling of a custom modal shown with ``Router/showModal(content:)``.
+enum ModalDefaults {
+    static var backgroundColor: Color { Color.black.opacity(0.25) }
+    static var transition: AnyTransition { AnyTransition.scale(scale: 0.9).combined(with: .opacity) }
 }

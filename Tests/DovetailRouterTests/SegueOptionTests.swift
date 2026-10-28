@@ -1,7 +1,7 @@
 import Testing
 @testable import DovetailRouter
 
-@Suite("SegueOption")
+@Suite("SegueOption", .tags(.router))
 struct SegueOptionTests {
     @Test func pushReusesExistingNavigationStack() {
         #expect(SegueOption.push.addRootNavigationStack == false)
