@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Build & Test (iOS)
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check for targets
+        id: targets
+        run: |
+          count=$(swift package describe --type json | python3 -c 'import json,sys; print(len(json.load(sys.stdin)["targets"]))')
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+          echo "Package has $count target(s)"
+      - name: Test
+        if: steps.targets.outputs.count != '0'
+        run: |
+          xcodebuild test \
+            -scheme Dovetail-Package \
+            -destination 'platform=iOS Simulator,name=iPhone 16' \
+            -skipPackagePluginValidation
