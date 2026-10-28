@@ -1,0 +1,23 @@
+name: Bug report
+description: Something isn't working as expected
+labels: [bug]
+body:
+  - type: input
+    id: module
+    attributes:
+      label: Module
+      placeholder: e.g. AppRouter
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Include steps to reproduce and what you expected.
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      placeholder: Dovetail 0.1.0, Xcode 16.2, iOS 17.5
